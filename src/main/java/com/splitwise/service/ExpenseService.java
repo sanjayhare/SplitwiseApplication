@@ -25,6 +25,7 @@ public class ExpenseService {
 
     public void createExpense(Expenses expenses) {
 
+        System.out.println("ExpenseService in createExpense" );
         Optional<Group> group = groupRepository.findById(expenses.getGroupId());
         if (!group.isEmpty()) {
             List<Contributers> contributers = expenses.getContributers();
@@ -58,7 +59,7 @@ public class ExpenseService {
                     if (!isMemberpresent) {
                         throw new ResourceNotFoundException("Members", "Id", String.valueOf(contributers1.getContId()));
                     }
-                    System.out.println("contributers1" + contributers1.getContId());
+                    System.out.println("ExpenseService contributers1" + contributers1.getContId());
                     contributers1.setAmount(amount);
                 }
             }
