@@ -1,0 +1,47 @@
+package com.splitwise.service;
+
+import com.splitwise.entity.Group;
+import com.splitwise.entity.Members;
+import com.splitwise.exception.RecordAlreadyExistsException;
+import com.splitwise.repository.GroupRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class GroupService {
+
+    @Autowired
+    private GroupRepository groupRepository;
+    @Autowired
+    private SequenceGeneratorService sequenceGeneratorService;
+
+    public void createGroup(Group group) {
+
+        Optional<Group> group1 = groupRepository.findByTitle(group.getTitle().trim());
+        System.out.println("GroupService group::" + group.toString());
+        System.out.println("GroupService group1::" + group1.toString());
+        if (!group1.isEmpty()) {
+            throw new RecordAlreadyExistsException("Group Name Already Exist");
+        }
+        List<Members> members = group.getMembers();
+        Members members1 = new Members();
+        for (int i = 0; i < members.size(); i++) {
+            members1 = members.get(i);
+            members1.setMemberId(i + 1L);
+        }
+        group.setGroupId(sequenceGeneratorService.generateSequence(Group.SEQUENCE_NAME));
+        group.setTitle(group.getTitle().trim());
+        groupRepository.save(group);
+    }
+    public List<Group> getGroupList() {
+        List<Group> groups = groupRepository.findAll();
+        return groups;
+    }
+    public Optional<Group> getGroup(Long id) {
+        Optional<Group> group = groupRepository.findById(id);
+        return group;
+    }
+}
