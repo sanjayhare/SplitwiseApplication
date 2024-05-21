@@ -10,6 +10,8 @@ import com.splitwise.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +27,7 @@ public class ExpenseService {
 
     public void createExpense(Expenses expenses) {
 
-        System.out.println("ExpenseService in createExpense" );
+        System.out.println("ExpenseService in createExpense");
         Optional<Group> group = groupRepository.findById(expenses.getGroupId());
         if (!group.isEmpty()) {
             List<Contributers> contributers = expenses.getContributers();
@@ -60,8 +62,55 @@ public class ExpenseService {
                         throw new ResourceNotFoundException("Members", "Id", String.valueOf(contributers1.getContId()));
                     }
                     System.out.println("ExpenseService contributers1" + contributers1.getContId());
-                    contributers1.setAmount(amount);
+                    contributers1.setAmount(BigDecimal.valueOf(amount));
                 }
+            }
+            else if (expenses.getSplitType() != null && expenses.getSplitType().equalsIgnoreCase("propotionally")) {
+                System.out.println("ExpenseService in propotionally loop");
+                double totalProportion = 0.00;
+                for (int i = 0; i < contributers.size(); i++) {
+                    contributers1 = contributers.get(i);
+                    boolean isMemberpresent = false;
+                    for (Members members1 : members) {
+                        System.out.println("ExpenseService ContId:" + contributers1.getContId());
+                        System.out.println("ExpenseService MemberId:" + members1.getMemberId());
+                        if (contributers1.getContId() == members1.getMemberId()) {
+                            isMemberpresent = true;
+                        }
+                    }
+                    System.out.println("ExpenseService isMemberpresent:" + isMemberpresent);
+                    if (!isMemberpresent) {
+                        throw new ResourceNotFoundException("Members", "Id", String.valueOf(contributers1.getContId()));
+                    }
+                    System.out.println("ExpenseService getProportion:" + contributers1.getProportion());
+                    totalProportion = totalProportion + contributers1.getProportion();
+
+                }
+                System.out.println("ExpenseService totalProportion:" + totalProportion);
+                double amount = expenses.getAmount();
+                double splitAmount = amount / totalProportion;
+                for (int i = 0; i < contributers.size(); i++) {
+                    contributers1 = contributers.get(i);
+                    boolean isMemberpresent = false;
+                    for (Members members1 : members) {
+                        System.out.println("ExpenseService ContId:" + contributers1.getContId());
+                        System.out.println("ExpenseService MemberId:" + members1.getMemberId());
+                        if (contributers1.getContId() == members1.getMemberId()) {
+                            isMemberpresent = true;
+                        }
+                    }
+                    System.out.println("ExpenseService isMemberpresent:" + isMemberpresent);
+                    if (!isMemberpresent) {
+                        throw new ResourceNotFoundException("Members", "Id", String.valueOf(contributers1.getContId()));
+                    }
+                    double amountAssigned = splitAmount * contributers1.getProportion();
+                    BigDecimal assignedAmount =   BigDecimal.valueOf(amountAssigned);
+                    System.out.println("ExpenseService amountAssigned:" + amountAssigned);
+                    contributers1.setAmount(assignedAmount.setScale(2, RoundingMode.HALF_UP));
+                }
+
+            } else if (expenses.getSplitType() != null && expenses.getSplitType().equalsIgnoreCase("byAmount")) {
+            // Started for by loop
             }
             expenses.setExpId(sequenceGeneratorService.generateSequence(Expenses.SEQUENCE_NAME));
             expeneseRepository.save(expenses);
@@ -71,6 +120,12 @@ public class ExpenseService {
     }
     public List<Expenses> getExpenseList() {
         List<Expenses> expenses = expeneseRepository.findAll();
+        return expenses;
+    }
+
+    public Optional<Expenses> getExpense(String id) {
+
+        Optional<Expenses> expenses = expeneseRepository.findById(Long.valueOf(id));
         return expenses;
     }
 }
