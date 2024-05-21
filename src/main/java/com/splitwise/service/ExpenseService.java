@@ -110,7 +110,7 @@ public class ExpenseService {
                 }
 
             } else if (expenses.getSplitType() != null && expenses.getSplitType().equalsIgnoreCase("byAmount")) {
-            // Started for by loop
+                System.out.println("ExpenseService in byAmount loop:" );
             }
             expenses.setExpId(sequenceGeneratorService.generateSequence(Expenses.SEQUENCE_NAME));
             expeneseRepository.save(expenses);
