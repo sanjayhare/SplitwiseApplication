@@ -128,6 +128,7 @@ public class ExpenseService {
                     }
                 }
             } else {
+                System.out.println("Invalid Split type");
                 throw new SplitWiseMessegeException("Invalid Split type");
             }
             expenses.setExpId(sequenceGeneratorService.generateSequence(Expenses.SEQUENCE_NAME));
