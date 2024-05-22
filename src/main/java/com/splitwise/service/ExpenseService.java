@@ -5,6 +5,7 @@ import com.splitwise.entity.Expenses;
 import com.splitwise.entity.Group;
 import com.splitwise.entity.Members;
 import com.splitwise.exception.ResourceNotFoundException;
+import com.splitwise.exception.SplitWiseMessegeException;
 import com.splitwise.repository.ExpeneseRepository;
 import com.splitwise.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +65,7 @@ public class ExpenseService {
                     System.out.println("ExpenseService contributers1" + contributers1.getContId());
                     contributers1.setAmount(BigDecimal.valueOf(amount));
                 }
-            }
-            else if (expenses.getSplitType() != null && expenses.getSplitType().equalsIgnoreCase("propotionally")) {
+            } else if (expenses.getSplitType() != null && expenses.getSplitType().equalsIgnoreCase("propotionally")) {
                 System.out.println("ExpenseService in propotionally loop");
                 double totalProportion = 0.00;
                 for (int i = 0; i < contributers.size(); i++) {
@@ -104,20 +104,40 @@ public class ExpenseService {
                         throw new ResourceNotFoundException("Members", "Id", String.valueOf(contributers1.getContId()));
                     }
                     double amountAssigned = splitAmount * contributers1.getProportion();
-                    BigDecimal assignedAmount =   BigDecimal.valueOf(amountAssigned);
+                    BigDecimal assignedAmount = BigDecimal.valueOf(amountAssigned);
                     System.out.println("ExpenseService amountAssigned:" + amountAssigned);
                     contributers1.setAmount(assignedAmount.setScale(2, RoundingMode.HALF_UP));
                 }
 
             } else if (expenses.getSplitType() != null && expenses.getSplitType().equalsIgnoreCase("byAmount")) {
-                System.out.println("ExpenseService in byAmount loop:" );
+
+                System.out.println("ExpenseService in byAmount loop:");
+                for (int i = 0; i < contributers.size(); i++) {
+                    contributers1 = contributers.get(i);
+                    boolean isMemberpresent = false;
+                    for (Members members1 : members) {
+                        System.out.println("ExpenseService ContId:" + contributers1.getContId());
+                        System.out.println("ExpenseService MemberId:" + members1.getMemberId());
+                        if (contributers1.getContId() == members1.getMemberId()) {
+                            isMemberpresent = true;
+                        }
+                    }
+                    System.out.println("ExpenseService isMemberpresent:" + isMemberpresent);
+                    if (!isMemberpresent) {
+                        throw new ResourceNotFoundException("Members", "Id", String.valueOf(contributers1.getContId()));
+                    }
+                }
+            } else {
+                throw new SplitWiseMessegeException("Invalid Split type");
             }
             expenses.setExpId(sequenceGeneratorService.generateSequence(Expenses.SEQUENCE_NAME));
             expeneseRepository.save(expenses);
         } else {
-            throw new ResourceNotFoundException("Group", "Id", String.valueOf(expenses.getGroupId()));
+            throw new ResourceNotFoundException("Group", "GroupID", String.valueOf(expenses.getGroupId()));
+
         }
     }
+
     public List<Expenses> getExpenseList() {
         List<Expenses> expenses = expeneseRepository.findAll();
         return expenses;
