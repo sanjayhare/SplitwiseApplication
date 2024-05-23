@@ -57,5 +57,11 @@ public class ExpensesController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(expenses);
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<Expenses>> searchInExpense(@RequestParam String title){
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(expenseService.fullTextSearch(title));
+    }
 
 }

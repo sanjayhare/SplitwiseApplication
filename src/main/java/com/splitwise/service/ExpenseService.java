@@ -13,6 +13,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,6 +34,9 @@ public class ExpenseService {
     private GroupRepository groupRepository;
     @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public void createExpense(Expenses expenses) {
 
@@ -164,5 +172,20 @@ public class ExpenseService {
             throw new SplitWiseMessegeException("No Records Found !!");
         }
         return expensesPage.getContent();
+    }
+
+    public List<Expenses> fullTextSearch(String searchPhrase) {
+
+        System.out.println("ExpenseService in fullTextSearch:");
+        mongoTemplate.indexOps(Expenses.class)
+                .ensureIndex(new TextIndexDefinition.TextIndexDefinitionBuilder().onFields( "title","attributes.attribute_value").build());
+        TextCriteria textCriteria = TextCriteria
+                .forDefaultLanguage()
+                .caseSensitive(false)
+                .matchingPhrase(searchPhrase);
+        Query query = TextQuery.queryText(textCriteria)
+                .sortByScore();
+        System.out.println("ExpenseService query:" + query.toString());
+        return mongoTemplate.find(query, Expenses.class);
     }
 }
