@@ -9,6 +9,10 @@ import com.splitwise.exception.SplitWiseMessegeException;
 import com.splitwise.repository.ExpeneseRepository;
 import com.splitwise.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -148,5 +152,17 @@ public class ExpenseService {
 
         Optional<Expenses> expenses = expeneseRepository.findById(Long.valueOf(id));
         return expenses;
+    }
+
+    public List<Expenses> getExpensesBySorting(int pageNum, String sortField, String sortDir) {
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize,
+                sortDir.equals("asc") ? Sort.by(sortField).ascending()
+                        : Sort.by(sortField).descending());
+        Page<Expenses> expensesPage = expeneseRepository.findAll(pageable);
+        if (expensesPage.isEmpty() || expensesPage == null) {
+            throw new SplitWiseMessegeException("No Records Found !!");
+        }
+        return expensesPage.getContent();
     }
 }

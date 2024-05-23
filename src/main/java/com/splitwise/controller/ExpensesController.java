@@ -8,6 +8,7 @@ import com.splitwise.entity.Expenses;
 import com.splitwise.service.ExpenseService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,4 +48,14 @@ public class ExpensesController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(expenses);
     }
+
+    @GetMapping("/getExpenses/page/{pageNum}")
+    public ResponseEntity<List<Expenses>> getExpenseBySort(
+            @PathVariable(name = "pageNum") int pageNum, @RequestParam("sortField") String sortField,
+            @RequestParam("sortDir") String sortDir) {
+        List<Expenses> expenses = expenseService.getExpensesBySorting(pageNum,sortField,sortDir);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(expenses);
+    }
+
 }
