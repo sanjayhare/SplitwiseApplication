@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,6 +145,7 @@ public class ExpenseService {
                 throw new SplitWiseMessegeException("Invalid Split type");
             }
             expenses.setExpId(sequenceGeneratorService.generateSequence(Expenses.SEQUENCE_NAME));
+            expenses.setDateTime(LocalDateTime.now());
             expeneseRepository.save(expenses);
         } else {
             throw new ResourceNotFoundException("Group", "GroupID", String.valueOf(expenses.getGroupId()));

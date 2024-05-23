@@ -1,5 +1,6 @@
 package com.splitwise.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(value = "expenses")
@@ -28,8 +31,8 @@ public class Expenses {
    // @NotBlank(message = "Amount must not be blank")
     private Double amount;
 
-    @NotBlank(message = "dateTime must not be blank")
-    private String dateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dateTime;
 
    // @NotBlank(message = "paidBy must not be blank")
     private Long paidBy;

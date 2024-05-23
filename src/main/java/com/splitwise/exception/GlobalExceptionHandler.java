@@ -35,9 +35,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         });
         return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
     }
+
+    //Gloabl exception handler
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception,
+                                                                  WebRequest webRequest) {
+        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(CustomerAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDto> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException exception,
-                                                                                 WebRequest webRequest){
+                                                                                 WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,
@@ -48,8 +62,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto>handleResourceNotFoundException(ResourceNotFoundException exception,
-                                                                           WebRequest webRequest){
+    public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception,
+                                                                            WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
                 HttpStatus.NOT_FOUND,
@@ -60,8 +74,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(RecordAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto>handleRecordAlreadyExistsException(RecordAlreadyExistsException exception,
-                                                                           WebRequest webRequest){
+    public ResponseEntity<ErrorResponseDto> handleRecordAlreadyExistsException(RecordAlreadyExistsException exception,
+                                                                               WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
                 HttpStatus.NOT_FOUND,
@@ -72,8 +86,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(SplitWiseMessegeException.class)
-    public ResponseEntity<ErrorResponseDto>handleErrorMessagesException(SplitWiseMessegeException exception,
-                                                                              WebRequest webRequest){
+    public ResponseEntity<ErrorResponseDto> handleErrorMessagesException(SplitWiseMessegeException exception,
+                                                                         WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
                 HttpStatus.NOT_FOUND,

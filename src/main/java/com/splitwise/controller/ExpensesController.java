@@ -2,13 +2,10 @@ package com.splitwise.controller;
 
 import com.splitwise.constant.TaskConstants;
 import com.splitwise.dto.ResponseDto;
-
 import com.splitwise.entity.Expenses;
-
 import com.splitwise.service.ExpenseService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
