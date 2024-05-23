@@ -61,4 +61,19 @@ public class ExpensesController {
                 .body(expenseService.fullTextSearch(title));
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<ResponseDto> updateExpense(@Valid @RequestBody Expenses expenses){
+
+        expenseService.updateExpense(expenses);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseDto(TaskConstants.STATUS_201,TaskConstants.MESSAGE_200));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDto> deleteExpense(@RequestParam String id){
+        expenseService.deleteExpense(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseDto(TaskConstants.STATUS_201,TaskConstants.MESSAGE_200));
+    }
+
 }
