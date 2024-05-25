@@ -71,9 +71,16 @@ public class ExpensesController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteExpense(@RequestParam String id){
-        expenseService.deleteExpense(id);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseDto(TaskConstants.STATUS_201,TaskConstants.MESSAGE_200));
+       boolean isDeleted =  expenseService.deleteExpense(id);
+        if (isDeleted) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDto(TaskConstants.STATUS_200, TaskConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(TaskConstants.STATUS_417, TaskConstants.MESSAGE_417_DELETE));
+        }
     }
 
 }

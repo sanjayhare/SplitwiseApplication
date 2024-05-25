@@ -3,6 +3,7 @@ package com.splitwise.service;
 import com.splitwise.entity.Group;
 import com.splitwise.entity.Members;
 import com.splitwise.exception.RecordAlreadyExistsException;
+import com.splitwise.exception.ResourceNotFoundException;
 import com.splitwise.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,16 @@ public class GroupService {
     }
     public Optional<Group> getGroup(Long id) {
         Optional<Group> group = groupRepository.findById(id);
+        if(group.isEmpty()){
+            throw new ResourceNotFoundException("Group", "GroupID", String.valueOf(id));
+        }
         return group;
     }
+    public boolean deleteGroup(Long id) {
+        boolean isDeleted = false;
+        groupRepository.deleteById(id);
+        isDeleted = true;
+        return isDeleted;
+    }
+
 }

@@ -298,7 +298,6 @@ public class ExpenseService {
                 System.out.println("Invalid Split type");
                 throw new SplitWiseMessegeException("Invalid Split type");
             }
-           // expenses.setExpId(sequenceGeneratorService.generateSequence(Expenses.SEQUENCE_NAME));
             expenses.setDateTime(LocalDateTime.now());
             expeneseRepository.save(expenses);
         } else {
@@ -311,6 +310,7 @@ public class ExpenseService {
     public boolean deleteExpense(String expId) {
         boolean isDeleted = false;
         expeneseRepository.deleteById(Long.valueOf(expId));
+        isDeleted = true;
         return isDeleted;
     }
 }
