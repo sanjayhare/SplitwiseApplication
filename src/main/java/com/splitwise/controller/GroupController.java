@@ -74,4 +74,19 @@ public class GroupController {
                     .body(new ResponseDto(TaskConstants.STATUS_417, TaskConstants.MESSAGE_417_DELETE));
         }
     }
+
+    @PutMapping ("/updateGroup")
+    public ResponseEntity<ResponseDto> updateGroup(@Valid @RequestBody Group group) {
+
+        boolean isUpdated = groupService.updateGroup(group);
+        if (isUpdated) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDto(TaskConstants.STATUS_200, TaskConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(TaskConstants.STATUS_417, TaskConstants.MESSAGE_417_DELETE));
+        }
+    }
 }

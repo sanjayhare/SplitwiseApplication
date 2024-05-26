@@ -74,23 +74,21 @@ public class GroupService {
         return isDeleted;
     }
 
-    public boolean update(Long gId , Long mId ) {
-        boolean isDeleted = false;
-        Optional<Group> group = groupRepository.findById(gId);
-        if(group.isEmpty()){
-            throw new ResourceNotFoundException("Group", "GroupID", String.valueOf(gId));
+    public boolean updateGroup(Group group) {
+        boolean isUpdated = false;
+        Optional<Group> group1 = groupRepository.findById(group.getGroupId());
+        if(group1.isEmpty()){
+            throw new ResourceNotFoundException("Group", "GroupID", String.valueOf(group.getGroupId()));
         }
-        List<Members> members = group.get().getMembers();
-        for(Members members1 : members)
-        {
-            if(members1.getMemberId()== mId){
-                members.remove(members1);
-            }
+        List<Members> members = group.getMembers();
+        Members members1 = new Members();
+        for (int i = 0; i < members.size(); i++) {
+            members1 = members.get(i);
+            members1.setMemberId(i + 1L);
         }
-        group.get().setMembers(members);
-        groupRepository.save(group.get());
-        isDeleted = true;
-        return isDeleted;
+        groupRepository.save(group);
+        isUpdated = true;
+        return isUpdated;
     }
 
 }
