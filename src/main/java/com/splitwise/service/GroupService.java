@@ -55,4 +55,42 @@ public class GroupService {
         return isDeleted;
     }
 
+    public boolean deleteMember(Long gId , Long mId ) {
+        boolean isDeleted = false;
+        Optional<Group> group = groupRepository.findById(gId);
+        if(group.isEmpty()){
+            throw new ResourceNotFoundException("Group", "GroupID", String.valueOf(gId));
+        }
+        List<Members> members = group.get().getMembers();
+        for(Members members1 : members)
+        {
+            if(members1.getMemberId()== mId){
+                members.remove(members1);
+            }
+        }
+        group.get().setMembers(members);
+        groupRepository.save(group.get());
+        isDeleted = true;
+        return isDeleted;
+    }
+
+    public boolean update(Long gId , Long mId ) {
+        boolean isDeleted = false;
+        Optional<Group> group = groupRepository.findById(gId);
+        if(group.isEmpty()){
+            throw new ResourceNotFoundException("Group", "GroupID", String.valueOf(gId));
+        }
+        List<Members> members = group.get().getMembers();
+        for(Members members1 : members)
+        {
+            if(members1.getMemberId()== mId){
+                members.remove(members1);
+            }
+        }
+        group.get().setMembers(members);
+        groupRepository.save(group.get());
+        isDeleted = true;
+        return isDeleted;
+    }
+
 }

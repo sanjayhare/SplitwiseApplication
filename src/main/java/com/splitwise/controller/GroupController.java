@@ -58,4 +58,20 @@ public class GroupController {
                     .body(new ResponseDto(TaskConstants.STATUS_417, TaskConstants.MESSAGE_417_DELETE));
         }
     }
+
+    @DeleteMapping("/deleteMember")
+    public ResponseEntity<ResponseDto> deleteMember(@RequestParam
+                                                   @Pattern(regexp = "\\d+", message = "The field must contain only numeric values")
+                                                   String gId , String mId) {
+        boolean isDeleted = groupService.deleteMember(Long.valueOf(gId),Long.valueOf(mId));
+        if (isDeleted) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDto(TaskConstants.STATUS_200, TaskConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDto(TaskConstants.STATUS_417, TaskConstants.MESSAGE_417_DELETE));
+        }
+    }
 }
