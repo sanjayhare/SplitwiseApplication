@@ -12,6 +12,7 @@ import com.splitwise.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class GroupService {
     @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
 
-    public void createGroup(Group group) {
+    public void createGroup(Group group ,Principal principal) {
 
         Optional<Group> group1 = groupRepository.findByTitle(group.getTitle().trim());
         System.out.println("GroupService group::" + group.toString());
@@ -35,10 +36,21 @@ public class GroupService {
             throw new RecordAlreadyExistsException("Group Name Already Exist");
         }
         List<Members> members = group.getMembers();
+        boolean isUserPresnet = false;
         Members members1 = new Members();
+        System.out.println("GroupService principal=" +principal.getName());
+
         for (int i = 0; i < members.size(); i++) {
             members1 = members.get(i);
+            if(members1.getName().equalsIgnoreCase(principal.getName()))
+            {
+                isUserPresnet= true;
+            }
             members1.setMemberId(i + 1L);
+        }
+        if(!isUserPresnet)
+        {
+            throw  new SplitWiseMessegeException("You cannot remove yourself from group");
         }
         group.setGroupId(sequenceGeneratorService.generateSequence(Group.SEQUENCE_NAME));
         group.setTitle(group.getTitle().trim());

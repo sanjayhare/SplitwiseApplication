@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +24,10 @@ public class GroupController {
     private GroupService groupService;
 
     @PostMapping("/createGroup")
-    public ResponseEntity<ResponseDto> createUser(@Valid @RequestBody Group group) {
+    public ResponseEntity<ResponseDto> createUser(@Valid @RequestBody Group group, Principal principal) {
         System.out.println("in GroupController ");
-        groupService.createGroup(group);
+
+        groupService.createGroup(group,principal);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDto(TaskConstants.STATUS_201, TaskConstants.MESSAGE_201));
     }
