@@ -24,7 +24,7 @@ public class MemberController {
 
     @GetMapping("/getMemberExpList")
     public ResponseEntity<List<MembersDto>> getGroupList() {
-        List<MembersDto> membersDto = membersService.getMembersExpenses();
+        List<MembersDto> membersDto = membersService.getMembersExpensesList();
         return ResponseEntity.status(HttpStatus.OK).body(membersDto);
     }
 }

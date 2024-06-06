@@ -24,6 +24,31 @@ public class MembersService {
     private GroupRepository groupRepository;
 
 
+    public List<MembersDto> getMembersExpensesList() {
+        List<MembersDto> membersList = new ArrayList<>();
+        List<MembersDto> finalMembersList = new ArrayList<>();
+
+        membersList = getMembersExpenses();
+        MembersDto membersDto = new MembersDto();
+        for (int i = 0; i < membersList.size(); i++) {
+            membersDto = membersList.get(i);
+            MembersDto membersDto1 = new MembersDto();
+            for (int j = 0; j < membersList.size(); j++) {
+                if (i != j) {
+                    membersDto1 = membersList.get(j);
+                    if(membersDto.getMemberName().equalsIgnoreCase(membersDto1.getMemberName()))
+                    {
+                        membersDto.setAmount(membersDto.getAmount().add(membersDto1.getAmount()));
+                        membersList.remove(membersDto1);
+                    }
+                }
+            }
+            finalMembersList.add(membersDto);
+        }
+        return finalMembersList;
+    }
+
+
     public List<MembersDto> getMembersExpenses() {
         List<MembersDto> membersDtoVector = new ArrayList<>();
         List<Group> groups = groupRepository.findAll();
